@@ -24,6 +24,9 @@ jobs:
       - name: dotnet publish
         run: dotnet publish ./webapp-sam-lab13.csproj -c Release -o ./myapp
 
+      - name: List published files
+        run: dir ./myapp   # For Windows, use 'ls' for Unix/Linux systems
+
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
@@ -45,6 +48,9 @@ jobs:
         with:
           name: .net-app  # This must match the name used in the upload step
       
+      - name: List downloaded files
+        run: dir ./myapp   # Verify that files were downloaded successfully
+
       - name: Login to Azure
         uses: azure/login@v2
         with:
