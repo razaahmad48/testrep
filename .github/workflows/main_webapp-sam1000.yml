@@ -1,6 +1,3 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
 name: Build and deploy ASP.Net Core app to Azure Web App - webapp-sam1000
 
 on:
@@ -22,17 +19,16 @@ jobs:
           dotnet-version: '8.x'
 
       - name: Build with dotnet
-        run: dotnet build --configuration Release ./webapp-sam-lab13.csproj
+        run: dotnet build ./webapp-sam-lab13.csproj --configuration Release
 
       - name: dotnet publish
         run: dotnet publish ./webapp-sam-lab13.csproj -c Release -o ./myapp
 
-
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
-          name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
+          name: .net-app   # Ensure this name matches in the download step
+          path: ./myapp    # Path to the published output directory
 
   deploy:
     runs-on: windows-latest
@@ -41,13 +37,13 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write #This is required for requesting the JWT
+      id-token: write
 
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
-          name: .net-app
+          name: .net-app  # This must match the name used in the upload step
       
       - name: Login to Azure
         uses: azure/login@v2
@@ -62,5 +58,4 @@ jobs:
         with:
           app-name: 'webapp-sam1000'
           slot-name: 'Production'
-          package: .
-          
+          package: './myapp'  # This should be the output directory
